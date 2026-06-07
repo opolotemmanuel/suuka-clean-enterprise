@@ -1,0 +1,31 @@
+# Maven
+target/
+
+# IntelliJ
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Build
+*.class
+
+# Spring Boot
+application-local.properties
+
+# Node Modules (if frontend exists)
+node_modules/
+
+# React Build
+dist/
+build/

@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:suuka_clean;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+suuka:
+  security:
+    jwt-secret: ${JWT_SECRET:dev-secret-change-me-dev-secret-change-me-32}
+    access-token-minutes: ${JWT_ACCESS_TOKEN_MINUTES:60}
+    refresh-token-days: ${JWT_REFRESH_TOKEN_DAYS:14}

@@ -1,0 +1,12 @@
+package com.suuka.cleaning.common.enums;
+
+public enum ApprovalType {
+    REFUND_APPROVAL,
+    PURCHASE_APPROVAL,
+    CLEANER_SUSPENSION,
+    PRICE_CHANGE,
+    PAYROLL_APPROVAL,
+    CAMPAIGN_APPROVAL,
+    CORPORATE_DISCOUNT,
+    SYSTEM_SETTING_CHANGE
+}
