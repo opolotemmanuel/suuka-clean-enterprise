@@ -3,11 +3,12 @@ import PageLayout from './components/PageLayout';
 import { roleMenuItems, Role } from './data/roleActivities';
 import {
   clearBackendSession,
-  connectDemoBackendSession,
   getBackendSession,
   loadAIRecommendations,
   loadBackendData,
   loadDashboardSummary,
+  loadMe,
+  storeBackendUser,
   type AIRecommendationRecord,
   type BackendUser,
   type DashboardAction,
@@ -1187,297 +1188,8 @@ function renderMainContent(role: Role, selectedItem: string) {
   if (selectedItem === 'profile') return <ClientProfileForm />;
   if (selectedItem === 'earnings') return <CleanerEarningsSummary />;
   if (selectedItem === 'system-settings') return <SettingsPage role={role} />;
-      { Job: 'Downtown Apartment', Time: 'Today, 1:30 PM', Status: 'On route' },
-    ],
-    schedule: [
-      { Day: 'Monday', Window: '8:00 AM - 2:00 PM', Jobs: '3', Status: 'Open' },
-      { Day: 'Tuesday', Window: '10:00 AM - 5:00 PM', Jobs: '4', Status: 'Full' },
-    ],
-    'supply-requests': [
-      { Request: 'Microfiber cloths', Quantity: '24', Status: 'Submitted', ETA: 'Jun 8' },
-      { Request: 'Disinfectant', Quantity: '6', Status: 'Approved', ETA: 'Jun 7' },
-    ],
-    'training-materials': [
-      { Module: 'Closeout Notes', Type: 'Checklist', Progress: 'Recommended', Status: 'Open' },
-      { Module: 'Before / After Photos', Type: 'Guide', Progress: 'Complete', Status: 'Passed' },
-    ],
-    loyalty: [
-      { Program: 'Home Care Rewards', Points: '450', NextReward: '$20 credit', Status: 'Active' },
-      { Program: 'Recurring Booking Bonus', Points: '120', NextReward: 'Priority slot', Status: 'Eligible' },
-    ],
-    referrals: [
-      { Invitee: 'Noor M.', Reward: '$15 credit', Date: 'Jun 3', Status: 'Pending first booking' },
-      { Invitee: 'Jacob H.', Reward: '$15 credit', Date: 'May 22', Status: 'Earned' },
-    ],
-    'cleaner-monitoring': [
-      { Cleaner: 'Mia W.', Territory: 'Northside', Jobs: '4', Status: 'On track' },
-      { Cleaner: 'Samir P.', Territory: 'Central', Jobs: '3', Status: 'Needs check-in' },
-    ],
-    'performance-reports': [
-      { Team: 'Team 1', Completion: '96%', Rating: '4.8', Status: 'Stable' },
-      { Team: 'Team 4', Completion: '89%', Rating: '4.5', Status: 'Review' },
-    ],
-    'complaint-monitoring': [
-      { Case: 'SC-917', Client: 'Amina K.', Severity: 'Medium', Status: 'Reviewing' },
-      { Case: 'SC-921', Client: 'Noor M.', Severity: 'Low', Status: 'Assigned' },
-    ],
-    'territory-management': [
-      { Territory: 'Central', Coverage: '88%', Demand: 'High', Status: 'Add capacity' },
-      { Territory: 'Northside', Coverage: '96%', Demand: 'Normal', Status: 'Covered' },
-    ],
-    'supply-approval': [
-      { Request: 'REQ-104', Team: 'Team 4', Amount: '$220', Status: 'Awaiting approval' },
-      { Request: 'REQ-105', Team: 'Team 2', Amount: '$80', Status: 'Approved' },
-    ],
-    'user-management': [
-      { Name: 'Amina K.', Role: 'Client', Status: 'Active', LastSeen: 'Today' },
-      { Name: 'Mia W.', Role: 'Cleaner', Status: 'Available', LastSeen: '12 min ago' },
-    ],
-    'service-catalog': [
-      { ServiceName: 'Home Cleaning', Category: 'Residential', Duration: '2 hrs', BasePrice: '$75', RequiredSkills: 'Standard clean', Zones: 'Central, Northside', Status: 'Active' },
-      { ServiceName: 'Post Construction Cleaning', Category: 'Specialized', Duration: '6 hrs', BasePrice: '$280', RequiredSkills: 'Deep clean', Zones: 'Corporate zones', Status: 'Approval required' },
-      { ServiceName: 'Carpet Cleaning', Category: 'Add-on', Duration: '90 mins', BasePrice: '$60', RequiredSkills: 'Machine handling', Zones: 'All active zones', Status: 'Active' },
-    ],
-    'pricing-engine': [
-      { Rule: 'Peak Pricing', BasePrice: '$75', LocationMultiplier: '1.10', DemandMultiplier: '1.18', UrgencyMultiplier: '1.00', CorporateDiscount: '0%', Status: 'Admin approval required' },
-      { Rule: 'Corporate Office Monthly', BasePrice: '$420', LocationMultiplier: '1.00', DemandMultiplier: '1.00', UrgencyMultiplier: '1.00', CorporateDiscount: '12%', Status: 'Approved' },
-      { Rule: 'Emergency Same-Day', BasePrice: '$95', LocationMultiplier: '1.15', DemandMultiplier: '1.20', UrgencyMultiplier: '1.35', CorporateDiscount: '0%', Status: 'Review' },
-    ],
-    'sla-management': [
-      { Account: 'Lakeview Office', ResponseTime: '2 hrs', ArrivalTime: '98%', CompletionTime: '96%', QualityScore: '94%', SLACompliance: '97%', Status: 'Healthy' },
-      { Account: 'Garden Plaza', ResponseTime: '4 hrs', ArrivalTime: '91%', CompletionTime: '93%', QualityScore: '89%', SLACompliance: '90%', Status: 'At risk' },
-    ],
-    documents: [
-      { Document: 'Corporate Contract', Owner: 'Lakeview Office', Version: 'v3', Expiry: 'Dec 31', Permission: 'Executive/Admin', Status: 'Valid' },
-      { Document: 'Cleaner NIN Copy', Owner: 'Mia W.', Version: 'v1', Expiry: 'Aug 14', Permission: 'HR/Admin', Status: 'Expiry alert' },
-      { Document: 'Supplier Agreement', Owner: 'Sparkle Supply', Version: 'v2', Expiry: 'Nov 10', Permission: 'Procurement/Admin', Status: 'Valid' },
-    ],
-    'knowledge-center': [
-      { Category: 'Cleaning Procedures', Article: 'Deep Clean SOP', Version: '2.1', Bookmarks: '48', Status: 'Published' },
-      { Category: 'Safety Procedures', Article: 'Chemical Handling', Version: '1.8', Bookmarks: '32', Status: 'Review due' },
-      { Category: 'Customer Service', Article: 'Complaint Closeout', Version: '1.3', Bookmarks: '19', Status: 'Published' },
-    ],
-    clients: [
-      { Client: 'Amina K.', Segment: 'VIP', LastBooking: 'Jun 1', Status: 'Active' },
-      { Client: 'Jacob H.', Segment: 'Standard', LastBooking: 'May 21', Status: 'Follow-up due' },
-    ],
-    cleaners: [
-      { Cleaner: 'Mia W.', Rating: '4.9', Jobs: '4 today', Status: 'Available' },
-      { Cleaner: 'Samir P.', Rating: '4.7', Jobs: '3 today', Status: 'On route' },
-    ],
-    'admin-bookings': [
-      { Booking: 'SC-201', Client: 'Amina K.', Cleaner: 'Mia W.', Status: 'Confirmed' },
-      { Booking: 'SC-202', Client: 'Jacob H.', Cleaner: 'Samir P.', Status: 'Pending dispatch' },
-    ],
-    dispatch: [
-      { Route: 'Central AM', Cleaner: 'Mia W.', Stops: '4', Status: 'Active' },
-      { Route: 'Northside PM', Cleaner: 'Tariq S.', Stops: '3', Status: 'Needs coverage' },
-    ],
-    'crm-center': [
-      { ClientName: 'Amina K.', Phone: '+1 555 0101', LastBooking: 'Jun 1', LastContact: 'Jun 3', RiskScore: 'Low', LifetimeValue: '$2,840', AssignedAgent: 'Nora', Action: 'View Profile' },
-      { ClientName: 'Jacob H.', Phone: '+1 555 0102', LastBooking: 'Apr 22', LastContact: 'May 1', RiskScore: 'High', LifetimeValue: '$1,420', AssignedAgent: 'Iris', Action: 'Create Follow-Up' },
-    ],
-    'workforce-management': [
-      { Cleaner: 'Mia W.', Attendance: '98%', Training: 'Complete', Certification: 'Valid', Status: 'Top performer' },
-      { Cleaner: 'Tariq S.', Attendance: '89%', Training: 'Due', Certification: 'Renewal soon', Status: 'Review' },
-    ],
-    'quality-assurance': [
-      { Case: 'QA-204', Job: 'SC-190', Score: '92%', Finding: 'Passed', Status: 'Recorded' },
-      { Case: 'QA-205', Job: 'SC-191', Score: '68%', Finding: 'Photo mismatch', Status: 'Supervisor review' },
-    ],
-    'complaints-disputes': [
-      { Case: 'SC-917', Type: 'Complaint', Priority: 'Medium', Owner: 'Customer Success', Status: 'Investigating' },
-      { Case: 'RF-302', Type: 'Refund Request', Priority: 'High', Owner: 'Finance', Status: 'Approval required' },
-    ],
-    incidents: [
-      { Incident: 'INC-118', Type: 'Property Damage', Severity: 'Medium', Evidence: 'Photos attached', Investigation: 'Supervisor review', Status: 'Open' },
-      { Incident: 'INC-119', Type: 'Safety Violation', Severity: 'High', Evidence: 'Report pending', Investigation: 'Assigned', Status: 'Risk scored' },
-    ],
-    suppliers: [
-      { Supplier: 'Sparkle Supply', Category: 'Chemicals', LeadTime: '3 days', Status: 'Active' },
-      { Supplier: 'CleanOps', Category: 'Equipment', LeadTime: '5 days', Status: 'Backup' },
-    ],
-    procurement: [
-      { Request: 'PR-204', Item: 'Disinfectant', Quantity: '80 units', Supplier: 'BioSafe', Amount: '$640', Approval: 'Required', Status: 'Review' },
-      { Request: 'PR-205', Item: 'Uniforms', Quantity: '24', Supplier: 'CleanOps', Amount: '$720', Approval: 'Pending', Status: 'Queued' },
-    ],
-    'asset-management': [
-      { AssetID: 'VAC-018', Category: 'Vacuum Cleaner', PurchaseDate: 'Jan 12', Condition: 'Good', AssignedUser: 'Mia W.', MaintenanceSchedule: 'Jun 20', Status: 'Active' },
-      { AssetID: 'PHN-044', Category: 'Phone', PurchaseDate: 'Mar 4', Condition: 'Fair', AssignedUser: 'Samir P.', MaintenanceSchedule: 'Jul 2', Status: 'Inspect' },
-      { AssetID: 'PRS-003', Category: 'Pressure Washer', PurchaseDate: 'Sep 18', Condition: 'Service due', AssignedUser: 'Warehouse', MaintenanceSchedule: 'Jun 8', Status: 'Maintenance forecast' },
-    ],
-    'vehicle-management': [
-      { Vehicle: 'UG-204A', Driver: 'Tariq S.', FuelUsage: 'Normal', Maintenance: 'Jun 18', Insurance: 'Valid', Status: 'Active' },
-      { Vehicle: 'UG-305B', Driver: 'Mia W.', FuelUsage: 'Above baseline', Maintenance: 'Jul 1', Insurance: 'Valid', Status: 'AI anomaly review' },
-    ],
-    'finance-control': [
-      { Account: 'Client invoices', Value: '$18,420', Status: 'Healthy', Owner: 'Finance Admin' },
-      { Account: 'Cleaner payouts', Value: '$7,840', Status: 'Pending review', Owner: 'Operations' },
-    ],
-    'marketing-center': [
-      { Campaign: 'Inactive Clients Winback', Channel: 'Email', Audience: '142', Status: 'Needs approval' },
-      { Campaign: 'Referral Boost', Channel: 'SMS', Audience: '83', Status: 'Draft' },
-    ],
-    'territory-expansion': [
-      { Zone: 'Northside', Demand: 'High', CleanerCoverage: 'Medium', ExpansionScore: '82' },
-      { Zone: 'West End', Demand: 'Medium', CleanerCoverage: 'High', ExpansionScore: '67' },
-    ],
-    'corporate-accounts': [
-      { Account: 'Lakeview Office', Contract: 'Monthly', AccountManager: 'Nora', SLACompliance: '97%', Billing: 'Corporate invoice', RenewalForecast: 'Healthy', Status: 'Active' },
-      { Account: 'Garden Plaza', Contract: 'Quarterly', AccountManager: 'Iris', SLACompliance: '90%', Billing: 'Corporate invoice', RenewalForecast: 'At risk', Status: 'Renewal due' },
-    ],
-    notifications: [
-      { Template: 'Booking Reminder', Channel: 'WhatsApp', DeliveryRate: '98%', ReadRate: '82%', Retry: 'Enabled', Schedule: 'Automated' },
-      { Template: 'Invoice Due', Channel: 'Email', DeliveryRate: '96%', ReadRate: '64%', Retry: 'Enabled', Schedule: 'Daily' },
-    ],
-    'business-intelligence': [
-      { Submodule: 'Executive Dashboard', Metric: 'Revenue trend', Insight: '+12% MTD', Forecast: 'Stable', Status: 'Live' },
-      { Submodule: 'Territory Analytics', Metric: 'Underserved zones', Insight: '2 high-demand areas', Forecast: 'Expansion opportunity', Status: 'Review' },
-      { Submodule: 'AI Forecasting', Metric: 'Weekend demand', Insight: '+21%', Forecast: 'Needs capacity', Status: 'Live' },
-    ],
-    'executive-copilot': [
-      { Question: 'Why is revenue down?', Evidence: 'Corporate payments delayed three days', Recommendation: 'Review AR follow-ups', ActionPolicy: 'Never takes action' },
-      { Question: 'Which customers are at risk?', Evidence: 'Reduced bookings and open complaints', Recommendation: 'Assign retention review', ActionPolicy: 'Recommendation only' },
-      { Question: 'What inventory needs restocking?', Evidence: 'Disinfectant below forecast', Recommendation: 'Review purchase request', ActionPolicy: 'Approval required' },
-    ],
-    'approval-center': [
-      { RequestType: 'Refund approval', RequestedBy: 'Finance', Priority: 'High', Date: 'Jun 5', Status: 'Review', Action: 'Approve / Reject' },
-      { RequestType: 'AI campaign recommendation', RequestedBy: 'AI Assistant', Priority: 'Medium', Date: 'Jun 5', Status: 'Queued', Action: 'Review' },
-    ],
-    'audit-logs': [
-      { Timestamp: '08:42', User: 'System Admin', Role: 'Admin', Action: 'Settings viewed', PreviousValue: 'None', NewValue: 'Read access', IPAddress: '10.0.0.24', Status: 'Allowed' },
-      { Timestamp: '10:02', User: 'Executive Admin', Role: 'Executive', Action: 'AI recommendation approved', PreviousValue: 'Queued', NewValue: 'Approved', IPAddress: '10.0.0.18', Status: 'Logged' },
-      { Timestamp: '11:15', User: 'Finance Manager', Role: 'Finance', Action: 'Refund review opened', PreviousValue: 'Pending', NewValue: 'Under review', IPAddress: '10.0.0.44', Status: 'Recorded' },
-    ],
-    'security-center': [
-      { Control: 'Authentication', Requirement: 'Email, password, MFA, Google Login', Status: 'Enabled', Owner: 'System Admin' },
-      { Control: 'Permissions', Requirement: 'RBAC, feature, page, action-level checks', Status: 'Configured', Owner: 'System Admin' },
-      { Control: 'Security Logs', Requirement: 'Required', Status: 'Active', Owner: 'System Admin' },
-    ],
-    'backup-recovery': [
-      { Backup: 'Daily', LastRun: 'Jun 5, 02:00', Storage: 'S3-compatible', RecoveryTest: 'Passed', Status: 'Healthy' },
-      { Backup: 'Weekly', LastRun: 'Jun 1, 03:00', Storage: 'S3-compatible', RecoveryTest: 'Passed', Status: 'Healthy' },
-      { Backup: 'Monthly', LastRun: 'Jun 1, 04:00', Storage: 'S3-compatible', RecoveryTest: 'Scheduled', Status: 'Ready' },
-    ],
-    'system-health': [
-      { Service: 'Server', Status: 'Healthy', Uptime: '99.98%', AIInsight: 'Normal baseline' },
-      { Service: 'Database', Status: 'Healthy', Uptime: '99.99%', AIInsight: 'No anomaly' },
-      { Service: 'Notification Services', Status: 'Watch', Uptime: '99.20%', AIInsight: 'Retry rate elevated' },
-      { Service: 'Payment Services', Status: 'Healthy', Uptime: '99.95%', AIInsight: 'Stable' },
-    ],
-    'multi-city': [
-      { Country: 'Uganda', Region: 'Central', District: 'Kampala', City: 'Kampala', Zone: 'Northside', Branch: 'Branch A', Status: 'Active' },
-      { Country: 'Uganda', Region: 'Central', District: 'Wakiso', City: 'Entebbe', Zone: 'Airport Road', Branch: 'Branch B', Status: 'Expansion review' },
-    ],
-    messages: [
-      { Thread: 'Booking SC-201', From: 'Operations', Updated: 'Today', Status: 'Open' },
-      { Thread: 'Support SC-1042', From: 'Support', Updated: 'Yesterday', Status: 'Replied' },
-    ],
-    support: [
-      { Ticket: 'SC-1042', Topic: 'Invoice question', Updated: 'Today', Status: 'Open' },
-      { Ticket: 'SC-1038', Topic: 'Cleaner arrival', Updated: 'May 31', Status: 'Closed' },
-    ],
-    'route-planner': [
-      { Stop: 'Lakeview Office', ETA: '9:00 AM', Distance: '2.1 mi', Status: 'Next' },
-      { Stop: 'Downtown Apartment', ETA: '1:30 PM', Distance: '4.8 mi', Status: 'Queued' },
-    ],
-    'bookings-operations': [
-      { Booking: 'SC-201', Window: '10:00 AM', Cleaner: 'Mia W.', Status: 'Confirmed' },
-      { Booking: 'SC-202', Window: '2:00 PM', Cleaner: 'Unassigned', Status: 'Dispatch needed' },
-    ],
-    'cleaner-schedules': [
-      { Cleaner: 'Mia W.', Shift: '8:00 AM - 3:00 PM', Jobs: '4', Status: 'Full' },
-      { Cleaner: 'Samir P.', Shift: '11:00 AM - 6:00 PM', Jobs: '3', Status: 'Open capacity' },
-    ],
-    'route-management': [
-      { Route: 'Central AM', Stops: '4', ETAHealth: 'On time', Status: 'Active' },
-      { Route: 'Northside PM', Stops: '3', ETAHealth: 'Risk', Status: 'Review' },
-    ],
-    'territory-operations': [
-      { Territory: 'Central', Bookings: '42', Coverage: '88%', Status: 'Add capacity' },
-      { Territory: 'Northside', Bookings: '31', Coverage: '96%', Status: 'Covered' },
-    ],
-    'delivery-tracking': [
-      { Service: 'SC-201', Cleaner: 'Mia W.', Stage: 'On site', Status: 'Active' },
-      { Service: 'SC-202', Cleaner: 'Samir P.', Stage: 'En route', Status: 'On time' },
-    ],
-    complaints: [
-      { Case: 'SC-917', Client: 'Amina K.', Owner: 'Nora', Status: 'Investigating' },
-      { Case: 'SC-921', Client: 'Noor M.', Owner: 'Iris', Status: 'Reply drafted' },
-    ],
-    'client-follow-ups': [
-      { Client: 'Jacob H.', Reason: 'Inactive 60 days', Agent: 'Iris', Status: 'Call due' },
-      { Client: 'Noor M.', Reason: 'Low rating', Agent: 'Nora', Status: 'Email drafted' },
-    ],
-    'vip-clients': [
-      { Client: 'Amina K.', LifetimeValue: '$2,840', LastContact: 'Jun 3', Status: 'Active' },
-      { Client: 'Lakeview Office', LifetimeValue: '$9,200', LastContact: 'Jun 1', Status: 'Renewal watch' },
-    ],
-    'at-risk-clients': [
-      { Client: 'Jacob H.', RiskScore: 'High', Trigger: 'Reduced bookings', Status: 'Follow-up assigned' },
-      { Client: 'Noor M.', RiskScore: 'Medium', Trigger: 'Complaint open', Status: 'Monitor' },
-    ],
-    'campaign-performance': [
-      { Campaign: 'Winback', Conversion: '12%', Revenue: '$1,240', Status: 'Active' },
-      { Campaign: 'Referral Boost', Conversion: '8%', Revenue: '$840', Status: 'Draft' },
-    ],
-    'cleaner-records': [
-      { Cleaner: 'Mia W.', Attendance: '98%', Rating: '4.9', Status: 'Active' },
-      { Cleaner: 'Tariq S.', Attendance: '89%', Rating: '4.6', Status: 'Training due' },
-    ],
-    training: [
-      { Module: 'Service Standards', Assigned: '34 cleaners', Completion: '82%', Status: 'In progress' },
-      { Module: 'Photo Evidence', Assigned: '12 cleaners', Completion: '66%', Status: 'Due' },
-    ],
-    attendance: [
-      { Cleaner: 'Mia W.', CheckIns: '22/22', Late: '0', Status: 'Excellent' },
-      { Cleaner: 'Samir P.', CheckIns: '20/22', Late: '2', Status: 'Review' },
-    ],
-    'leave-requests': [
-      { Cleaner: 'Tariq S.', Dates: 'Jun 10 - Jun 12', Coverage: 'Needed', Status: 'Pending' },
-      { Cleaner: 'Mia W.', Dates: 'Jun 20', Coverage: 'Covered', Status: 'Approved' },
-    ],
-    'performance-plans': [
-      { Cleaner: 'Samir P.', Focus: 'Arrival time', Owner: 'HR', Status: 'Active' },
-      { Cleaner: 'Tariq S.', Focus: 'Closeout notes', Owner: 'Supervisor', Status: 'Draft' },
-    ],
-    certifications: [
-      { Cleaner: 'Mia W.', Certification: 'Deep Clean', Expires: 'Sep 10', Status: 'Valid' },
-      { Cleaner: 'Tariq S.', Certification: 'Chemical Safety', Expires: 'Jun 22', Status: 'Renew soon' },
-    ],
-    'finance-invoices': [
-      { Invoice: 'INV-321', Client: 'Amina K.', Amount: '$120', Status: 'Paid' },
-      { Invoice: 'INV-322', Client: 'Jacob H.', Amount: '$75', Status: 'Due' },
-    ],
-    payments: [
-      { Payment: 'PAY-118', Source: 'Wallet', Amount: '$75', Status: 'Processed' },
-      { Payment: 'PAY-119', Source: 'Card', Amount: '$120', Status: 'Settled' },
-    ],
-    'refund-approvals': [
-      { Refund: 'RF-302', Client: 'Noor M.', Amount: '$45', Reason: 'Complaint', Status: 'Approval needed' },
-      { Refund: 'RF-303', Client: 'Jacob H.', Amount: '$25', Reason: 'Late arrival', Status: 'Review' },
-    ],
-    'profit-loss': [
-      { Category: 'Revenue', Month: 'June', Amount: '$12,450', Status: 'Tracking' },
-      { Category: 'Operating Costs', Month: 'June', Amount: '$6,180', Status: 'Tracking' },
-    ],
-    'cash-flow': [
-      { Account: 'Corporate AR', Trend: '3 days slower', Amount: '$4,800', Status: 'Follow-up' },
-      { Account: 'Client Wallets', Trend: 'Stable', Amount: '$2,120', Status: 'Healthy' },
-    ],
-    expenses: [
-      { Expense: 'Supplies', Amount: '$1,240', Owner: 'Operations', Status: 'Approved' },
-      { Expense: 'Route fuel', Amount: '$620', Owner: 'Dispatch', Status: 'Review' },
-    ],
-    'payroll-summaries': [
-      { Batch: 'June Week 1', Cleaners: '34', Amount: '$7,840', Status: 'Pending approval' },
-      { Batch: 'May Week 4', Cleaners: '32', Amount: '$7,210', Status: 'Paid' },
-    ],
-  };
-
-  return tableRows[selectedItem] ? <ModulePanel title={selectedItem.split('-').map((word) => word[0].toUpperCase() + word.slice(1)).join(' ')} rows={tableRows[selectedItem]} /> : <OverviewPanel role={role} />;
+  return <BackendModulePanel role={role} selectedItem={selectedItem} />;
 }
-
 export default function App() {
   const pathname = usePathname();
   const initialUser = getBackendSession()?.user ?? null;
@@ -1491,6 +1203,7 @@ export default function App() {
   const [dashboardSummary, setDashboardSummary] = useState<DashboardSummary | null>(null);
   const [dashboardLoading, setDashboardLoading] = useState(false);
   const [dashboardError, setDashboardError] = useState<string | null>(null);
+  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendationRecord[]>([]);
 
   const authRoutes = new Set([
     '/login',
@@ -1505,6 +1218,21 @@ export default function App() {
     '/session-expired',
     '/unauthorized',
   ]);
+
+  useEffect(() => {
+    if (!getBackendSession()) return;
+    loadMe()
+      .then((response) => {
+        setBackendUser(response.data.user);
+        setBackendStatus('connected');
+        setRole(backendRoleToUiRole[response.data.user.role] ?? 'client');
+      })
+      .catch(() => {
+        clearBackendSession();
+        setBackendUser(null);
+        setBackendStatus('offline');
+      });
+  }, []);
 
   useEffect(() => {
     const routeRole = pathToRole[pathname];
@@ -1543,10 +1271,30 @@ export default function App() {
       setDashboardSummary(null);
       setDashboardError(null);
       setDashboardLoading(false);
+      setAiRecommendations([]);
       return;
     }
     void refreshDashboardSummary();
-  }, [backendStatus]);
+    if (backendUser?.permissions.includes('VIEW_AI_INTELLIGENCE')) {
+      loadAIRecommendations()
+        .then((response) => setAiRecommendations(response.data))
+        .catch(() => setAiRecommendations([]));
+    } else {
+      setAiRecommendations([]);
+    }
+  }, [backendStatus, backendUser]);
+
+  useEffect(() => {
+    function openModule(event: Event) {
+      const detail = (event as CustomEvent<string>).detail;
+      if (detail && roleMenuItems[role].some((item) => item.key === detail)) {
+        setSelectedItem(detail);
+        setSidebarOpen(false);
+      }
+    }
+    window.addEventListener('suuka-open-module', openModule);
+    return () => window.removeEventListener('suuka-open-module', openModule);
+  }, [role]);
 
   async function refreshDashboardSummary() {
     setDashboardLoading(true);
@@ -1561,30 +1309,23 @@ export default function App() {
     }
   }
 
-  async function connectBackend() {
-    setBackendStatus('connecting');
-    try {
-      const session = await connectDemoBackendSession();
-      setBackendUser(session.user);
-      setBackendStatus('connected');
-    } catch {
-      clearBackendSession();
-      setBackendUser(null);
-      setBackendStatus('error');
-    }
-  }
-
   function disconnectBackend() {
     clearBackendSession();
     setBackendUser(null);
     setBackendStatus('offline');
     setDashboardSummary(null);
+    setAiRecommendations([]);
   }
 
   function handleAuthenticated(user: BackendUser) {
     setBackendUser(user);
     setBackendStatus('connected');
     setRole(backendRoleToUiRole[user.role] ?? 'client');
+  }
+
+  function handleUserUpdated(user: BackendUser) {
+    storeBackendUser(user);
+    setBackendUser(user);
   }
 
   function handleDashboardAction(action: DashboardAction) {
@@ -1626,7 +1367,6 @@ export default function App() {
         setSidebarOpen(false);
       }}
       currentRole={role}
-      onRoleChange={setRole}
       isSidebarOpen={sidebarOpen}
       toggleSidebar={() => setSidebarOpen((value) => !value)}
       closeSidebar={() => setSidebarOpen(false)}
@@ -1634,7 +1374,7 @@ export default function App() {
       pageSubtitle={activeItem.key === 'dashboard' ? copy.subtitle : `${roleLabels[role]} access-controlled workspace`}
       backendUser={backendUser}
       backendStatus={backendStatus}
-      onConnectBackend={connectBackend}
+      onUserUpdated={handleUserUpdated}
       onDisconnectBackend={disconnectBackend}
     >
       <DashboardDataState
@@ -1643,11 +1383,11 @@ export default function App() {
         emptyStates={dashboardSummary?.emptyStates ?? []}
         onRetry={refreshDashboardSummary}
       />
-      <KPISection cards={connectedMetrics ?? metricsByRole[role]} />
-      <AIInsightsSection role={role} />
-      <QuickActions role={role} backendActions={dashboardSummary?.quickActions} onAction={handleDashboardAction} />
+      <KPISection cards={connectedMetrics ?? []} />
+      <AIInsightsSection role={role} recommendations={aiRecommendations} />
+      <QuickActions backendActions={dashboardSummary?.quickActions} onAction={handleDashboardAction} />
       <main className="main-work-area">{renderMainContent(role, activeItem.key)}</main>
-      <ActivityFeed role={role} />
+      <ActivityFeed activity={dashboardSummary?.activity ?? []} />
       <AuditTrail selectedItem={activeItem.key} />
     </PageLayout>
   );

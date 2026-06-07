@@ -84,6 +84,12 @@ public class MessageController {
         );
     }
 
+    @GetMapping("/unread-count")
+    @PreAuthorize("isAuthenticated()")
+    public ApiResponse<Long> unreadCount(@AuthenticationPrincipal SuukaPrincipal principal) {
+        return ApiResponse.success("Unread message count loaded", messageRepository.countByRecipientIdAndReadFalse(principal.getId()));
+    }
+
     @GetMapping("/conversations/{id}")
     @PreAuthorize("isAuthenticated()")
     public ApiResponse<ConversationDetail> conversation(@AuthenticationPrincipal SuukaPrincipal principal, @PathVariable UUID id) {
@@ -127,6 +133,17 @@ public class MessageController {
         message.setRead(true);
         auditService.record(principal.getId().toString(), "messages", "MESSAGE_READ", id.toString());
         return ApiResponse.success("Message marked as read", message);
+    }
+
+    @PatchMapping("/conversations/{id}/read")
+    @PreAuthorize("isAuthenticated()")
+    @Transactional
+    public ApiResponse<List<Message>> markConversationRead(@AuthenticationPrincipal SuukaPrincipal principal, @PathVariable UUID id) {
+        requireConversationAccess(principal.getId(), id);
+        List<Message> unreadMessages = messageRepository.findByConversationIdAndRecipientIdAndReadFalse(id, principal.getId());
+        unreadMessages.forEach(message -> message.setRead(true));
+        auditService.record(principal.getId().toString(), "messages", "CONVERSATION_READ", id.toString());
+        return ApiResponse.success("Conversation marked as read", messageRepository.saveAll(unreadMessages));
     }
 
     private Conversation requireConversationAccess(UUID userId, UUID conversationId) {

@@ -17,6 +17,9 @@ export type BackendUser = {
   permissions: string[];
   branch?: string;
   zone?: string;
+  profilePictureUrl?: string;
+  phoneNumber?: string;
+  accountStatus?: string;
 };
 
 export type AuthStatus = {
@@ -78,6 +81,30 @@ export type BackendNotification = {
   createdAt?: string;
 };
 
+export type BackendConversation = {
+  id: string;
+  participantOneId: string;
+  participantTwoId: string;
+  relatedModule?: string | null;
+  relatedEntityId?: string | null;
+  createdAt?: string;
+};
+
+export type BackendMessage = {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  recipientId: string;
+  body: string;
+  read: boolean;
+  createdAt?: string;
+};
+
+export type ConversationDetail = {
+  conversation: BackendConversation;
+  messages: BackendMessage[];
+};
+
 export type AIRecommendationRecord = {
   id: string;
   recommendationTitle: string;
@@ -116,6 +143,10 @@ export function storeBackendAuth(auth: AuthPayload) {
   localStorage.setItem(USER_KEY, JSON.stringify(auth.user));
 }
 
+export function storeBackendUser(user: BackendUser) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
 export function getRefreshToken() {
   return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
@@ -145,24 +176,22 @@ export async function connectDemoBackendSession(): Promise<BackendSession> {
 }
 
 export async function backendFetch<T>(path: string, init: RequestInit = {}): Promise<ApiResponse<T>> {
-  return backendFetchWithRetry<T>(path, init, true);
+  return backendFetchWithRetry<T>(path, init);
 }
 
-async function backendFetchWithRetry<T>(path: string, init: RequestInit, allowReconnect: boolean): Promise<ApiResponse<T>> {
+async function backendFetchWithRetry<T>(path: string, init: RequestInit): Promise<ApiResponse<T>> {
   const session = getBackendSession();
   const headers = new Headers(init.headers);
-  headers.set('Content-Type', headers.get('Content-Type') ?? 'application/json');
+  const isFormData = init.body instanceof FormData;
+  if (!isFormData) {
+    headers.set('Content-Type', headers.get('Content-Type') ?? 'application/json');
+  }
   if (session?.token) {
     headers.set('Authorization', `Bearer ${session.token}`);
   }
 
   const response = await fetch(path, { ...init, headers });
   const body = (await response.json().catch(() => null)) as ApiResponse<T> | null;
-  if ((response.status === 401 || response.status === 403) && allowReconnect && !path.startsWith('/api/auth/')) {
-    clearBackendSession();
-    await connectDemoBackendSession();
-    return backendFetchWithRetry<T>(path, init, false);
-  }
   if (!body) {
     throw new Error(`Backend request failed with ${response.status}`);
   }
@@ -182,6 +211,53 @@ export async function loadNotifications() {
 
 export async function markNotificationRead(id: string) {
   return backendFetch<BackendNotification>(`/api/notifications/${id}/read`, { method: 'PATCH' });
+}
+
+export async function markAllNotificationsRead() {
+  return backendFetch<BackendNotification[]>('/api/notifications/read-all', { method: 'PATCH' });
+}
+
+export async function performNotificationAction(id: string, action: string) {
+  return backendFetch<BackendNotification>(`/api/notifications/${id}/action`, {
+    method: 'POST',
+    body: JSON.stringify({ action }),
+  });
+}
+
+export async function loadConversations() {
+  return backendFetch<BackendConversation[]>('/api/messages/conversations');
+}
+
+export async function loadConversation(id: string) {
+  return backendFetch<ConversationDetail>(`/api/messages/conversations/${id}`);
+}
+
+export async function loadUnreadMessageCount() {
+  return backendFetch<number>('/api/messages/unread-count');
+}
+
+export async function sendConversationMessage(id: string, body: string) {
+  return backendFetch<BackendMessage>(`/api/messages/conversations/${id}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({ body }),
+  });
+}
+
+export async function markMessageRead(id: string) {
+  return backendFetch<BackendMessage>(`/api/messages/${id}/read`, { method: 'PATCH' });
+}
+
+export async function markConversationRead(id: string) {
+  return backendFetch<BackendMessage[]>(`/api/messages/conversations/${id}/read`, { method: 'PATCH' });
+}
+
+export async function updateProfilePicture(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return backendFetch<BackendUser>('/api/users/me/profile-picture', {
+    method: 'POST',
+    body: formData,
+  });
 }
 
 export async function loadBackendData<T = unknown>(path: string) {

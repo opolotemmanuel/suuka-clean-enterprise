@@ -41,9 +41,10 @@ public class SecurityConfig {
                                 "/api/auth/resend-verification-code",
                                 "/api/auth/verify-mfa",
                                 "/api/auth/resend-mfa",
+                                "/api/system/database-health",
+                                "/uploads/profile-pictures/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/h2-console/**"
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

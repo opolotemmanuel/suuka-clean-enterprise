@@ -14,7 +14,10 @@ public record UserSummary(
         Role role,
         Set<Permission> permissions,
         String branch,
-        String zone
+        String zone,
+        String phoneNumber,
+        String accountStatus,
+        String profilePictureUrl
 ) {
     public static UserSummary from(User user) {
         return new UserSummary(
@@ -24,7 +27,10 @@ public record UserSummary(
                 user.getRole(),
                 user.getPermissions(),
                 user.getBranch(),
-                user.getZone()
+                user.getZone(),
+                user.getPhoneNumber(),
+                user.getStatus().name(),
+                user.getProfilePictureUrl()
         );
     }
 }

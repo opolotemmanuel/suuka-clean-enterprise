@@ -36,6 +36,7 @@ public class User extends AuditableEntity {
     private boolean mfaEnabled;
     private String phoneNumber;
     private String address;
+    private String profilePictureUrl;
     private boolean accountVerified;
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
@@ -116,6 +117,8 @@ public class User extends AuditableEntity {
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     public boolean isAccountVerified() { return accountVerified; }
     public void setAccountVerified(boolean accountVerified) { this.accountVerified = accountVerified; }
     public String getVerificationCode() { return verificationCode; }

@@ -1,30 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { backendFetch } from '../../api/backend';
 
-const sampleProducts = [
-  { id: 'p1', name: 'All-purpose Cleaner', price: 6.5 },
-  { id: 'p2', name: 'Microfiber Cloths (5)', price: 8.0 },
-  { id: 'p3', name: 'Disinfectant Spray', price: 5.25 },
-];
+type InventoryItem = {
+  id: string;
+  name: string;
+  quantity: number;
+  reorderLevel: number;
+  unit?: string;
+};
 
 export default function ProductOrdering() {
   const [cart, setCart] = useState<string[]>([]);
+  const [products, setProducts] = useState<InventoryItem[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    backendFetch<InventoryItem[]>('/api/inventory-manager/items')
+      .then((response) => setProducts(response.data))
+      .catch((requestError) => setError(requestError instanceof Error ? requestError.message : 'Unable to load products'));
+  }, []);
 
   function add(id: string) {
     setCart((c) => [...c, id]);
   }
 
-  function checkout() {
-    alert('Checkout simulated: ' + JSON.stringify(cart));
-    setCart([]);
+  async function checkout() {
+    setError(null);
+    setMessage(null);
+    try {
+      await backendFetch('/api/inventory-manager/purchase-orders/request-approval', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: 'Product order approval',
+          items: cart,
+        }),
+      });
+      setCart([]);
+      setMessage('Purchase approval request submitted.');
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to submit purchase approval');
+    }
   }
 
   return (
     <div>
       <h3>Order Products & Consultations</h3>
+      {error && <p className="auth-message error">{error}</p>}
+      {message && <p className="auth-message">{message}</p>}
       <ul>
-        {sampleProducts.map((p) => (
+        {products.map((p) => (
           <li key={p.id} style={{ marginBottom: 8 }}>
-            <strong>{p.name}</strong> — ${p.price.toFixed(2)}{' '}
+            <strong>{p.name}</strong> — {p.quantity} {p.unit ?? 'units'} available{' '}
             <button onClick={() => add(p.id)} style={{ marginLeft: 8 }}>Add</button>
           </li>
         ))}

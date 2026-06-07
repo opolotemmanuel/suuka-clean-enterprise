@@ -30,5 +30,5 @@ export default function ActivityRenderer({ activity }: Props) {
   if (activity.includes('Update, reschedule') || activity.includes('Manage Bookings')) return <ManageBooking />;
   if (activity.includes('Review cleaners') || activity.includes('Review')) return <ReviewsHistory />;
 
-  return <div><em>No interactive view implemented for this activity yet.</em></div>;
+  return <div><em>Open this module from the role dashboard to load database records and permitted actions.</em></div>;
 }

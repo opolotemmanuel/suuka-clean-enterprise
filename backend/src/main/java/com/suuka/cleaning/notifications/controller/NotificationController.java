@@ -58,4 +58,13 @@ public class NotificationController {
         auditService.record(principal.getId().toString(), "notifications", "MARK_READ", id.toString());
         return ApiResponse.success("Notification marked as read", notificationRepository.save(notification));
     }
+
+    @PatchMapping("/read-all")
+    @PreAuthorize("isAuthenticated()")
+    public ApiResponse<List<Notification>> markAllRead(@AuthenticationPrincipal SuukaPrincipal principal) {
+        List<Notification> unreadNotifications = notificationRepository.findByUserIdAndReadFalse(principal.getId());
+        unreadNotifications.forEach(notification -> notification.setRead(true));
+        auditService.record(principal.getId().toString(), "notifications", "MARK_ALL_READ", String.valueOf(unreadNotifications.size()));
+        return ApiResponse.success("Notifications marked as read", notificationRepository.saveAll(unreadNotifications));
+    }
 }

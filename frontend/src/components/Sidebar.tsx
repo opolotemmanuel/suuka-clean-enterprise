@@ -1,17 +1,26 @@
-import { roleOptions, type MenuItem, type Role } from '../data/roleActivities';
+import { type MenuItem, type Role } from '../data/roleActivities';
+import { type BackendUser } from '../api/backend';
 
 type Props = {
   activeItem: string;
   menuItems: MenuItem[];
   currentRole: Role;
+  backendUser: BackendUser | null;
   onSelectItem: (key: string) => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const roleLabelByValue = Object.fromEntries(roleOptions.map((role) => [role.value, role.label])) as Record<Role, string>;
+export default function Sidebar({ activeItem, menuItems, currentRole, backendUser, onSelectItem, isOpen, onClose }: Props) {
+  const displayName = backendUser?.fullName ?? backendUser?.email ?? 'Signed-in user';
+  const displayRole = backendUser?.role ? backendUser.role.replaceAll('_', ' ') : currentRole.replaceAll('-', ' ');
+  const initials = displayName
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'SU';
 
-export default function Sidebar({ activeItem, menuItems, currentRole, onSelectItem, isOpen, onClose }: Props) {
   return (
     <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-body">
@@ -41,12 +50,16 @@ export default function Sidebar({ activeItem, menuItems, currentRole, onSelectIt
         </nav>
 
         <div className="sidebar-user-card" aria-label="Signed-in user">
-          <div className="sidebar-user-avatar" aria-hidden="true">
-            SC
-          </div>
+          {backendUser?.profilePictureUrl ? (
+            <img className="sidebar-user-avatar" src={backendUser.profilePictureUrl} alt="" />
+          ) : (
+            <div className="sidebar-user-avatar" aria-hidden="true">
+              {initials}
+            </div>
+          )}
           <div className="sidebar-user-details">
-            <p className="sidebar-user-name">Suuka User</p>
-            <p className="sidebar-user-role">{roleLabelByValue[currentRole]}</p>
+            <p className="sidebar-user-name">{displayName}</p>
+            <p className="sidebar-user-role">{displayRole}</p>
           </div>
         </div>
       </div>
